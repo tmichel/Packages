@@ -18,7 +18,7 @@ contexts:
             - meta_scope: comment.block.erb
             - match: "%>"
               pop: true
-        - match: "<%+(?!>)[-=]?"
+        - match: "<%+(?!>)(-|==?)?"
           captures:
             0: punctuation.section.embedded.ruby
           push:
