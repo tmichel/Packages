@@ -35,6 +35,11 @@ contexts:
         - include: block_raw
         - include: heading
         - include: separator
+    - match: '^([~`]{3,})(\w+)?'
+      push:
+        - meta_content_scope: markup.raw.block.markdown
+        - match: \1
+          pop: true
     - match: '^[ ]{0,3}([*+-])(?=\s)'
       captures:
         1: punctuation.definition.list_item.markdown
