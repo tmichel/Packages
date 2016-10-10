@@ -64,6 +64,7 @@ contexts:
           pop: true
         - include: general-constants
         - include: general-commands
+        - include: global-braces
         - match: '[A-Za-z[:digit:]-]*(?=\s*\=)'
           scope: variable.parameter.bracket.latex
 
@@ -173,7 +174,7 @@ contexts:
           (\{)(\\[A-Za-z@]+)(\})
           | (\\[A-Za-z@])+
         )
-        (?:(\[)(?:[^\]]*)(\]))?
+        (?:(\[)(?:[^\]]*)(\]))*
         (\{)
       captures:
         1: support.function.newcommand.latex storage.modifier.newcommand.latex
