@@ -306,6 +306,10 @@ type Foo = Bar[A] forSome { type A }
 // <- comment.block.documentation.scala
 */
 
+  /**/0xff
+//^^^^ comment.block.empty.scala
+//    ^^^^ - comment
+
    if
 // ^^ keyword.control.flow.scala
 
@@ -361,10 +365,10 @@ type Foo = Bar[A] forSome { type A }
 // ^^^ keyword.other.scala
 
    extends
-// ^^^^^^^ keyword.declaration.scala
+// ^^^^^^^ invalid.keyword.dangling-extends.scala
 
    with
-// ^^^^ keyword.declaration.scala
+// ^^^^ invalid.keyword.dangling-with.scala
 
    class
 // ^^^^^ storage.type.class.scala
@@ -1254,3 +1258,198 @@ for (
   abc = () => 42
 //         ^^ storage.type.function.arrow.scala
 )
+
+new {
+   "foo"
+// ^^^^^ string.quoted.double.scala
+}
+
+def foo(a: String*, b: (Int => String)*, c: Int*): Negative*
+//               ^ keyword.operator.varargs.scala
+//                                    ^ keyword.operator.varargs.scala
+//                                             ^ keyword.operator.varargs.scala
+//                                                         ^ support.type.scala - keyword
+
+def foo(a: Int * String): Unit
+//             ^ support.type.scala - keyword
+
+class Foo(a: String*)
+//                 ^ keyword.operator.varargs.scala
+
+class Foo(a: String* )
+//                  ^ - keyword
+
+def foo(a: String* )
+//                ^ - keyword
+
+trait AlgebraF[F[_]] { type f[x] = Algebra[F,x] }
+//                     ^^^^ storage.type.scala
+//                               ^ keyword.operator.assignment.scala
+
+// annotation examples from: http://www.scala-lang.org/files/archive/spec/2.11/11-annotations.html
+@deprecated("Use D", "1.0") class C { ... }
+// <- meta.annotation
+// ^^ variable.annotation
+//            ^^ string
+//                        ^ meta.annotation
+//                         ^ - meta.annotation
+
+@transient @volatile var m: Int
+// ^^ variable.annotation
+//          ^ variable.annotation
+
+String @local
+//     ^ punctuation.definition.annotation
+//      ^^ variable.annotation
+
+(e: @unchecked) match { ... }
+//   ^^ variable.annotation
+//              ^^^^^ keyword.control.flow
+
+// more complex:
+@scala.beans.BeanProperty
+// <- meta.annotation
+ // <- meta.annotation.identifier
+//^^^^^^^^^^^^^^^^^^^^^^^ meta.annotation.identifier
+//           ^^^^^^^^^^^^ variable.annotation
+//    ^ punctuation.accessor
+
+(e: Int @unchecked) match { ... }
+//  ^^ storage.type.primitive
+//       ^^ variable.annotation
+//                  ^^^^^ keyword.control.flow
+
+@obsolete("this class is horrible don't use it", alpha=3)
+//  ^^ variable.annotation
+//            ^ string
+//                                                     ^ constant.numeric.integer
+trait Function0[@specialized(Unit, Int, Double) T] {
+//               ^^ variable.annotation
+//                           ^^ storage.type.primitive
+//                                              ^ support.class
+//              ^ punctuation.definition.annotation
+//              ^ meta.annotation
+//                                            ^ meta.annotation.parameters
+//                                             ^ - meta.annotation
+//                               ^ punctuation.separator.arguments.annotation
+  def apply: T
+}
+
+x: Foo @volatile with Bar @foo.bar @bar with Baz
+//          ^^ variable.annotation
+//               ^^ keyword.declaration
+//                    ^^^ support.class
+//                        ^^^^^ - variable.annotation
+//                             ^^^ variable.annotation
+//                                  ^^^ variable.annotation
+//                                           ^^^ support.class
+
+   extends
+// ^^^^^^^ invalid.keyword.dangling-extends.scala
+
+   with
+// ^^^^ invalid.keyword.dangling-with.scala
+
+class Foo with Bar
+//        ^^^^ invalid.keyword.with-before-extends.scala
+
+class Foo extends Bar extends Baz
+//                    ^^^^^^^ invalid.keyword.extends-after-extends.scala
+
+class Foo extends Bar[A with B](42)
+//                    ^ support.class.scala
+//                      ^^^^ keyword.declaration.scala
+//                           ^ support.class.scala
+//                              ^^ constant.numeric.integer.scala
+
+class Foo extends Bar { val x = 42 } with Baz
+//                    ^ punctuation.section.braces.begin.scala
+//                                 ^ punctuation.section.braces.end.scala
+//                                   ^^^^ keyword.declaration.scala
+//                                        ^^^ entity.other.inherited-class.scala
+
+class Foo { val x = 42 } extends Bar with Baz
+//        ^ punctuation.section.braces.begin.scala
+//                     ^ punctuation.section.braces.end.scala
+//                       ^^^^^^^ keyword.declaration.scala
+//                               ^^^ entity.other.inherited-class.scala
+
+class Foo {
+
+// <- meta.class.body.scala
+}
+
+class Foo extends Bar {
+
+// <- meta.class.body.scala
+}
+
+   {
+// ^ punctuation.section.block.begin.scala
+     // <- meta.block.scala
+   }
+// ^ punctuation.section.block.end.scala
+
+   (
+// ^ punctuation.section.group.begin.scala
+     // <- meta.group.scala
+     )
+//   ^ punctuation.section.group.end.scala
+
+   [
+// ^ punctuation.definition.generic.begin.scala
+     // <- meta.generic.scala
+     ]
+//   ^ punctuation.definition.generic.end.scala
+
+class Foo extends Bar(42)
+//                   ^ punctuation.section.parens.begin.scala
+//                      ^ punctuation.section.parens.end.scala
+
+class Foo extends (Int => String)
+//                ^ punctuation.section.parens.begin.scala
+//                              ^ punctuation.section.parens.end.scala
+
+class Foo extends Bar[Int]
+//                   ^ punctuation.section.brackets.begin.scala
+//                       ^ punctuation.section.brackets.end.scala
+
+class Foo
+    extends Bar
+//  ^^^^^^^ keyword.declaration.scala
+//          ^^^ entity.other.inherited-class.scala
+
+class Foo extends Bar
+    with Baz
+//  ^^^^ keyword.declaration.scala
+//       ^^^ entity.other.inherited-class.scala
+
+class Foo extends Bar
+    with Baz
+    with Bin
+//  ^^^^ keyword.declaration.scala
+//       ^^^ entity.other.inherited-class.scala
+
+def foo
+   42
+// ^^ constant.numeric.integer.scala
+
+def foo()
+   42
+// ^^ constant.numeric.integer.scala
+
+def foo():
+   42
+// ^^ constant.numeric.integer.scala
+
+val foo: Thing =42
+//              ^^ constant.numeric.integer.scala
+
+var foo: Thing =42
+//              ^^ constant.numeric.integer.scala
+
+class Foo extends Bar with {
+   import Thing._
+// ^^^^^^ keyword.other.import.scala
+//        ^^^^^ variable.package.scala
+}

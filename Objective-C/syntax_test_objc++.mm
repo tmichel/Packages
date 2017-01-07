@@ -240,6 +240,10 @@ template<typename First = U<V>, typename... Rest> class tupleVariadic;
 /*                                      ^^^ keyword.operator.variadic */
 /*                                              ^ punctuation.section.generic.end */
 
+template<typename T...> void SomeClass<T...>::function();
+/*                                      ^^^ keyword.operator.variadic */
+/*                                            ^^^^^^^^ entity.name.function */
+
 template<typename Foo> inline struct Foo* baz()
 /*                     ^^^^^^ storage.modifier */
 /*                                   ^ - entity.name */
@@ -854,6 +858,20 @@ namespace tl {
 MACRONAME namespace ns3 {}
 /*        ^ keyword.control */
 
+extern "C++"
+// ^ storage.modifier
+//     ^^^^^ string.quoted.double
+{
+namespace std _GLIBCXX_VISIBILITY(default)
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.namespace
+// ^ keyword.control
+//        ^ entity.name.namespace
+//            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function-call
+//                               ^^^^^^^^^ meta.group
+//                                ^ keyword.control
+{}
+}
+
 /////////////////////////////////////////////
 // Classes, structs, unions and enums
 /////////////////////////////////////////////
@@ -1168,6 +1186,23 @@ private:
 /* <- meta.class meta.block punctuation.section.block.end */
  /* <- - meta.class meta.block */
 
+class Adapter2 : public Abstraction, private Scenario {
+/*                                 ^ punctuation.separator */
+}
+
+class Adapter : public Abstraction
+    #if defined ASPECTO_MACRO
+/*  ^^^ keyword.control.import  */
+    , public Scenario
+/*  ^ punctuation.separator */
+/*    ^ storage.modifier */
+/*           ^ entity.other.inherited-class */
+    #endif
+/*  ^^^^^^ keyword.control.import  */
+{
+
+}
+
 struct bar {
 /*^^^^^^^^^^ meta.struct */
 /*^^^^ storage.type */
@@ -1199,6 +1234,39 @@ enum baz {
 }
 /* <- meta.enum meta.block punctuation.section.block.end */
  /* <- - meta.enum meta.block */
+
+int main(void)
+{
+    struct UI_BoundingBox decorativeBox = {10, titleHeight-3, width-20, height-10};
+/*         ^ - entity.name */
+/*                        ^ - entity.name */
+}
+
+struct foo MACRO {
+/*     ^ entity.name.struct */
+/*         ^ - entity.name */
+}
+
+// Partially-typed
+struct foo
+/*     ^ entity.name */
+
+struct UI_MenuBoxData
+/* <- storage.type */
+/*     ^ entity.name.struct */
+{
+    struct UI_BoundingBox position;
+/*         ^ - entity.name */
+/*                        ^ - entity.name */
+    enum UI_BoxCharType borderType;
+/*       ^ - entity.name */
+/*                      ^ - entity.name */
+    unsigned int paddingX;
+    unsigned int paddingY;
+    struct UI_ScrollBoxText boxContents[];
+/*         ^ - entity.name */
+/*                          ^ - entity.name */
+};
 
 enum class qux : std::uint8_t
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.enum */
@@ -1359,6 +1427,31 @@ int disabled_func() {
     int d = 4;
 /*  ^ comment.block */
 #endif
+
+BOOL
+GetTextMetrics(
+    HDC hdc,
+    LPTEXTMETRIC lptm
+    )
+{
+#ifdef UNICODE
+/* <- keyword.control.import */
+    return GetTextMetricsW(
+/*         ^ variable.function */
+#else
+/* <- keyword.control.import */
+    return GetTextMetricsA(
+/*         ^ variable.function */
+#endif
+/* <- keyword.control.import */
+        hdc,
+        lptm
+        );
+/*      ^ meta.function-call */
+/*       ^ - meta.function-call */
+}
+ /* <- - meta.function */
+ /* <- - meta.block */
 
 /////////////////////////////////////////////
 // Matching various function definitions
@@ -1532,3 +1625,33 @@ NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@",
 /*                                          ^ variable.function */
 {}
 @end
+
+/////////////////////////////////////////////
+// Includes
+/////////////////////////////////////////////
+
+#include "foobar.h"
+/* <- keyword.control.import.include */
+/*       ^ punctuation.definition.string.begin */
+/*        ^^^^^^^^ string.quoted.double.include */
+/*                ^ punctuation.definition.string.end */
+
+#include <cstdlib>
+/* <- keyword.control.import.include */
+/*       ^ punctuation.definition.string.begin */
+/*        ^^^^^^^ string.quoted.other.lt-gt.include */
+/*               ^ punctuation.definition.string.end */
+
+#ifdef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+#include_next <math.h>
+/* <- keyword.control.import.include */
+/*            ^ punctuation.definition.string.begin */
+/*             ^^^^^^ string.quoted.other.lt-gt.include */
+/*                   ^ punctuation.definition.string.end */
+#endif
+
+#include<iostream>
+/* <- keyword.control.import.include */
+/*      ^ punctuation.definition.string.begin */
+/*       ^^^^^^^^ string.quoted.other.lt-gt.include */
+/*               ^ punctuation.definition.string.end */
