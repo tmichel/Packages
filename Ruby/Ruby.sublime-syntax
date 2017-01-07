@@ -496,7 +496,7 @@ contexts:
             match|
             scan|
             sub
-          )\b
+          )\b(?!\?)
         )
       scope: support.function.builtin.ruby
       push: try-regex
